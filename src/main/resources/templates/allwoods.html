@@ -15,46 +15,82 @@
     let node = {
         id: data.id,
         name: data.name,
+        type: data.type,
         nodeYes: data.yes,
         nodeNo: data.no,
+        level: 0,
     }
     window.onload = function () {
         addNode(node);
     }
-    let str = '';
-    function addNode(node, countLine=0) {
-        console.log(countLine);
-        let span = document.createElement('span');
-        for (let i = 0; i < countLine; i++) {
-            str = str + '-';
+    function addNode(node, str=' ') {
+        for (let i = 0; i < node.level; i++) {
+            str = str + '-------';
         }
         let div = document.createElement('div');
         let divId = document.createElement('div');
-        divId.innerHTML+=str+node.id;
+        if (node.value != undefined) divId.innerHTML +=node.value;
         div.append(divId);
         let divName = document.createElement('div');
-        divName.innerHTML+=str+node.name;
+        divName.innerHTML +=node.name;
+        let strTmp = node.name;
         div.append(divName);
         document.body.append(div);
-        if (node.nodeNo != null) {
-            let nodeNo = {
-                id: node.nodeNo.id,
-                name: node.nodeNo.name,
-                nodeYes: node.nodeNo.yes,
-                nodeNo: node.nodeNo.no,
-            }
-            addNode(nodeNo, countLine + 1);
-        }
+        div.insertAdjacentHTML("beforeend", '<form action="/wood/rename" method="post">' +
+            '<input value="'+node.name+'" name="nameNode">' +
+            '<input type="hidden" name="idNode" value="'+node.id+'">'+
+            '<input value="Изменить" type="submit">'+
+            '<input type="hidden"  value="'+node.type+'" name="typeNode">'+
+            '</form>');
+        div.insertAdjacentHTML("beforeend", '<form action="/wood/newbranch" method="post">' +
+            '<input type="hidden" value="'+node.name+'" name="nameNode">' +
+            '<input type="hidden" name="idNode" value="'+node.id+'">'+
+            '<input value="Добавить ветку Yes" type="submit">'+
+            '<input type="hidden"  value="'+node.type+'" name="typeNode">'+
+            '<input type="hidden"  value="Yes" name="value">'+
+            '</form>');
+        div.insertAdjacentHTML("beforeend", '<form action="/wood/newbranch" method="post">' +
+            '<input type="hidden" value="'+node.name+'" name="nameNode">' +
+            '<input type="hidden" name="idNode" value="'+node.id+'">'+
+            '<input value="Добавить ветку No" type="submit">'+
+            '<input type="hidden"  value="'+node.type+'" name="typeNode">'+
+            '<input type="hidden"  value="No" name="value">'+
+            '</form>');
+        div.insertAdjacentHTML("beforeend", '<form action="/wood/delete" method="post">' +
+            '<input type="hidden" value="'+node.name+'" name="nameNode">' +
+            '<input type="hidden" name="idNode" value="'+node.id+'">'+
+            '<input value="Удалить" type="submit">'+
+            '<input type="hidden"  value="'+node.type+'" name="typeNode">'+
+            '<input type="hidden"  value="No" name="value">'+
+            '</form>');
+        div.style.marginLeft = node.level*100+'px';
+        let nodeYes = {};
+        let nodeNo = {};
         if (node.nodeYes != null) {
-            let nodeYes = {
+            nodeYes = {
                 id: node.nodeYes.id,
                 name: node.nodeYes.name,
+                type: node.nodeYes.type,
                 nodeYes: node.nodeYes.yes,
                 nodeNo: node.nodeYes.no,
+                level: node.level + 1,
+                value: 'Yes',
             }
-            addNode(nodeYes, countLine + 1);
-        }
 
+        }
+        if (node.nodeNo != null) {
+            nodeNo = {
+                id: node.nodeNo.id,
+                name: node.nodeNo.name,
+                type: node.nodeNo.type,
+                nodeYes: node.nodeNo.yes,
+                nodeNo: node.nodeNo.no,
+                level: node.level + 1,
+                value: 'No',
+            }
+        }
+        if (node.nodeYes != null) {addNode(nodeYes);}
+        if (node.nodeNo != null) {addNode(nodeNo);}
     }
 </script>
 </body>

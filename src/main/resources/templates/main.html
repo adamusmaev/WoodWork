@@ -5,14 +5,54 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css"
+          integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://bootstrap5.ru/css/docs.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .btn-outline-secondary {
+            margin: 20px;
+        }
+
+        .block {
+            display: flex;
+            margin-top: -50px;
+        }
+
+        .text {
+            margin: 50px;
+        }
+        .container{
+            display: flex;
+            justify-content: center;
+            height: 80vh;
+            width: 100vw;
+            align-items: center;
+            flex-direction: column;
+        }
+
+    </style>
 </head>
 <body>
-    <span th:text="${answer.toString()}"></span>
-    <form th:action="@{/wood/yes}" method="post">
-        <input type="submit" value="Yes"/>
-    </form>
-    <form class="answerFormNo" th:action="@{/wood/no}" method="post">
-        <input type="submit" value="No"/>
-    </form>
+<div class="container">
+    <span class="text" th:text="${answer.getName()}"></span>
+    <div class="block" th:if="${answer.getType().equals('Question')}">
+        <form th:action="@{/wood/yes}" method="post">
+            <input class="btn btn-sm btn-outline-secondary" type="submit" value="Yes"/>
+        </form>
+        <form class="answerFormNo" th:action="@{/wood/no}" method="post">
+            <input class="btn btn-sm btn-outline-secondary" type="submit" value="No"/>
+        </form>
+    </div>
+    <div class="block" th:if="${answer.getType().equals('Wood')}">
+        <form th:action="@{/wood/restart}" method="post">
+            <input class="btn btn-sm btn-outline-secondary" type="submit" value="Попробывать ещё раз"/>
+        </form>
+    </div>
+</div>
 </body>
 </html>

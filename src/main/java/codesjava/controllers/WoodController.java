@@ -13,19 +13,23 @@ import org.json.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
 
 import java.io.IOException;
-import java.util.*;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 @Controller
 @RequestMapping(value = "/wood", produces = MediaType.APPLICATION_JSON_VALUE)
 public class WoodController {
 
     List<Node> listNode = new ArrayList<>();
+
+    RestTemplate restTemplate = new RestTemplate();
 
     @GetMapping()
     public String getCurrentNode(Model model) throws IOException {
@@ -72,7 +76,6 @@ public class WoodController {
         HttpGet httpGet = new HttpGet("http://localhost:8081/all");
         HttpResponse httpresponse = httpclient.execute(httpGet);
         Scanner sc = new Scanner(httpresponse.getEntity().getContent());
-        System.out.println(sc.hasNext());
         String strRes = "";
         while (sc.hasNext()) {
             strRes = strRes + sc.nextLine();
@@ -81,5 +84,73 @@ public class WoodController {
         model.addAttribute("json", jsonObject);
         return "allwoods";
     }
+
+    @PostMapping("/rename")
+    public String renameWood(@RequestParam Integer idNode,
+                             @RequestParam String nameNode,
+                             @RequestParam String typeNode,
+                             Model model) throws IOException, URISyntaxException {
+        if (typeNode.equals("Question")) {
+            try {
+                restTemplate.postForEntity("http://localhost:8081/updatequestion", new Question(idNode, nameNode), Question.class);
+            } catch (Exception e) {
+
+            }
+        }
+        if (typeNode.equals("Wood")) {
+            try {
+                restTemplate.postForEntity("http://localhost:8081/newwood", new Wood(idNode, nameNode), Wood.class);
+            } catch (Exception e) {
+
+            }
+        }
+        return "redirect:/wood/all";
+    }
+
+    @PostMapping("/newbranch")
+    public String addNewBranch(@RequestParam Integer idNode,
+                               @RequestParam String value) {
+        try {
+            restTemplate.postForEntity("http://localhost:8081/newquestion", new Question(idNode, "NULL Question", value), Question.class);
+        } catch (Exception e) {
+        }
+        return "redirect:/wood/all";
+    }
+
+    @PostMapping("/delete")
+    public String deleteNode(@RequestParam Integer idNode,
+                             @RequestParam String nameNode,
+                             @RequestParam String value,
+                             Model model) {
+        try {
+            restTemplate.postForEntity("http://localhost:8081/delete", new Question(idNode, "NULL Question", value), Question.class);
+        } catch (Exception e) {
+        }
+        return "redirect:/wood/all";
+    }
+
+    @PostMapping("/restart")
+    public String restart(Model model) throws IOException {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet("http://localhost:8081/restart");
+        HttpResponse httpresponse = httpclient.execute(httpGet);
+        return getCurrentNode(model);
+    }
 }
 
+//HttpClient httpclient = HttpClients.createDefault();
+//HttpPost httppost = new HttpPost("http://localhost:8081/updatequestion");
+//List<NameValuePair> params = new ArrayList<>(2);
+//params.add(new BasicNameValuePair("id", idNode));
+//params.add(new BasicNameValuePair("name", nameNode));
+//httppost.setEntity(new UrlEncodedFormEntity(params, "ISO-8859-1"));
+            /*org.apache.http.HttpEntity
+            httppost.setEntity(h);
+            HttpPost
+            URI uri = new URIBuilder(httppost.getURI())
+                    .add("id", "a")
+                    .addParameter("name", "q")
+                    .build();
+            ((HttpRequestBase) httppost).setURI(uri);
+            HttpResponse response = httpclient.execute(httppost);
+            System.out.println(EntityUtils.toString(response.getEntity()));*/
