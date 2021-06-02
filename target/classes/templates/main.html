@@ -16,6 +16,7 @@
 
         .btn-outline-secondary {
             margin: 20px;
+            font-size: 50px;
         }
 
         .block {
@@ -33,6 +34,7 @@
             width: 100vw;
             align-items: center;
             flex-direction: column;
+            font-size: 50px;
         }
 
     </style>
@@ -42,10 +44,10 @@
     <span class="text" th:text="${answer.getName()}"></span>
     <div class="block" th:if="${answer.getType().equals('Question')}">
         <form th:action="@{/wood/yes}" method="post">
-            <input class="btn btn-sm btn-outline-secondary" type="submit" value="Yes"/>
+            <input class="btn btn-sm btn-outline-secondary" type="submit" value="Да"/>
         </form>
         <form class="answerFormNo" th:action="@{/wood/no}" method="post">
-            <input class="btn btn-sm btn-outline-secondary" type="submit" value="No"/>
+            <input class="btn btn-sm btn-outline-secondary" type="submit" value="Нет"/>
         </form>
     </div>
     <div class="block" th:if="${answer.getType().equals('Wood')}">
@@ -53,6 +55,9 @@
             <input class="btn btn-sm btn-outline-secondary" type="submit" value="Попробывать ещё раз"/>
         </form>
     </div>
+    <form class="answerFormNo" th:action="@{/wood/back}" method="post">
+        <input class="btn btn-sm btn-outline-secondary" type="submit" value="Вернуться назад"/>
+    </form>
 </div>
 </body>
 </html>

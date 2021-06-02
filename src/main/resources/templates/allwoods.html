@@ -56,6 +56,7 @@
             '<input type="hidden"  value="'+node.type+'" name="typeNode">'+
             '<input type="hidden"  value="No" name="value">'+
             '</form>');
+        if (node.type == "Question")
         div.insertAdjacentHTML("beforeend", '<form action="/wood/delete" method="post">' +
             '<input type="hidden" value="'+node.name+'" name="nameNode">' +
             '<input type="hidden" name="idNode" value="'+node.id+'">'+

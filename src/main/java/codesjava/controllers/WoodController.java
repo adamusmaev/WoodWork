@@ -91,19 +91,11 @@ public class WoodController {
                              @RequestParam String typeNode,
                              Model model) throws IOException, URISyntaxException {
         if (typeNode.equals("Question")) {
-            try {
                 restTemplate.postForEntity("http://localhost:8081/updatequestion", new Question(idNode, nameNode), Question.class);
-            } catch (Exception e) {
-
-            }
         }
         if (typeNode.equals("Wood")) {
-            try {
                 restTemplate.postForEntity("http://localhost:8081/newwood", new Wood(idNode, nameNode), Wood.class);
-            } catch (Exception e) {
-
-            }
-        }
+           }
         return "redirect:/wood/all";
     }
 
@@ -133,6 +125,14 @@ public class WoodController {
     public String restart(Model model) throws IOException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet("http://localhost:8081/restart");
+        HttpResponse httpresponse = httpclient.execute(httpGet);
+        return getCurrentNode(model);
+    }
+
+    @PostMapping("/back")
+    public String back(Model model) throws IOException {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet("http://localhost:8081/back");
         HttpResponse httpresponse = httpclient.execute(httpGet);
         return getCurrentNode(model);
     }
